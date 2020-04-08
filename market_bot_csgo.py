@@ -7,6 +7,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 import webbrowser
 import socket
+import shelve
 
 
 def connect_to_sever():
@@ -100,8 +101,8 @@ def market_scheduler():
 
 
 win = Tk()
-win.geometry("370x500")
-win.maxsize(width=370, height=425)
+win.geometry("380x500")
+win.maxsize(width=380, height=425)
 win.title("Entry to bot")
 win.configure(bg="pink")
 
@@ -143,6 +144,14 @@ def browse():
     entry_path.delete(0, END)
     entry_path.insert(0, path_to_steam)
 
+def save_data():
+    with shelve.open("data") as data:
+        data["username"] = login_entry.get()
+        data["password"] = password_entry.get()
+        data["market_api_key"] = market_api_entry.get()
+        data["api_key"] = steam_api_entry.get()
+        data["steamguard_path"] = entry_path.get()
+
 
 def log_in():
     global username
@@ -164,12 +173,29 @@ def log_in():
         client.login(username, password, steamguard_path)
         messagebox.showinfo("Success",
                             'Bot logged in successfully:' + time.strftime("%d/%m/%Y, %H:%M:%S", time.localtime()))
+        save_data()
         create_widgets()
         global win
         win.destroy()
     except:
         messagebox.showerror("Error", "The account name or password that you have entered is incorrect")
 
+def insert_data():
+    with shelve.open("data") as data:
+        entry_login.delete(0, END)
+        entry_login.insert(0, data["username"])
+
+        entry_password.delete(0, END)
+        entry_password.insert(0, data["password"])
+
+        entry_market_api.delete(0, END)
+        entry_market_api.insert(0, data["market_api_key"])
+
+        entry_steam_api.delete(0, END)
+        entry_steam_api.insert(0, data["api_key"])
+
+        entry_path.delete(0, END)
+        entry_path.insert(0, data["steamguard_path"])
 
 def find_market_api():
     result = webbrowser.open("https://market.csgo.com/docs-v2", new=1)
@@ -239,6 +265,9 @@ btn.grid(row=5, column=2)
 
 btn_login = Button(win, text="Log in", command=log_in, pady=5, padx=10, bg="skyblue")
 btn_login.grid(row=6, column=1, sticky="w")
+
+btn_insert_data = Button(win, text="Insert data", command=insert_data, pady=5, padx=10, bg="skyblue")
+btn_insert_data.grid(row=6, column=2, sticky="w")
 
 lbl = Label(win, text="You need to put in 'Steamguard file path' txt file in format:  ", bg="pink")
 lbl.grid(row=7, column=0, columnspan=3, sticky="w")
