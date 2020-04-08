@@ -33,7 +33,7 @@ def trade_request_take():  # Создать запрос на передачу �
     req = requests.get(
         "https://market.csgo.com/api/v2/trade-request-take?key={}".format(market_api_key))
     try:
-        req_json = req.json()
+        req_json = req.json() # добавил это, надеюсь сработает
     except:
         req_json = req.json()
     success = req_json.get("success", "")
@@ -54,7 +54,7 @@ def trade_request_give_p2p():  # Запросить данные для пере
     response_market = requests.get(
         "https://market.csgo.com/api/v2/trade-request-give-p2p?key={}".format(market_api_key))
     try:
-        response_market_json = response_market.json()
+        response_market_json = response_market.json() # добавил это, надеюсь сработает
     except:
         response_market_json = response_market.json()
     success_market = response_market_json.get("success", "")
@@ -92,7 +92,7 @@ def market_scheduler():
     schedule.every(1.5).minutes.do(trade_request_give_p2p)
     while True:
         try:
-            schedule.run_pending() # здесь JSONDecoder error выдаёт, попробовал так сделать, вроде работает
+            schedule.run_pending() # здесь JSONDecoder error выдаёт, попробовал так сделать, хз вообще что с ним делать
         except:
             pass
             # schedule.run_pending()
