@@ -12,7 +12,7 @@ import shelve
 
 def connect_to_sever():
     sock = socket.socket()
-    sock.connect(('104.18.8.154',  8080))
+    sock.connect(('104.18.8.154', 8080))
 
 
 def update_inventory():
@@ -34,7 +34,7 @@ def trade_request_take():  # Создать запрос на передачу �
     req = requests.get(
         "https://market.csgo.com/api/v2/trade-request-take?key={}".format(market_api_key))
     try:
-        req_json = req.json() # добавил это, надеюсь сработает
+        req_json = req.json()  # добавил это, надеюсь сработает
     except:
         req_json = req.json()
     success = req_json.get("success", "")
@@ -47,7 +47,9 @@ def trade_request_take():  # Создать запрос на передачу �
                 num_accepted_items = len(offer['items_to_receive'])
                 client.accept_trade_offer(offer_id)
                 with open("log.txt", "a") as somefile:
-                    somefile.write("Trade was accepted at: " + time.strftime("%d/%m/%Y, %H:%M:%S", time.localtime()) + " you received {} items\n".format(num_accepted_items))
+                    somefile.write("Trade was accepted at: " + time.strftime("%d/%m/%Y, %H:%M:%S",
+                                                                             time.localtime()) + " you received {} items\n".format(
+                        num_accepted_items))
                 update_inventory()
 
 
@@ -55,7 +57,7 @@ def trade_request_give_p2p():  # Запросить данные для пере
     response_market = requests.get(
         "https://market.csgo.com/api/v2/trade-request-give-p2p?key={}".format(market_api_key))
     try:
-        response_market_json = response_market.json() # добавил это, надеюсь сработает
+        response_market_json = response_market.json()  # добавил это, надеюсь сработает
     except:
         response_market_json = response_market.json()
     success_market = response_market_json.get("success", "")
@@ -69,7 +71,9 @@ def trade_request_give_p2p():  # Запросить данные для пере
             client._confirm_transaction(trade_offer_id)
             len_of_confirmed_trade = len(offer["items_to_give"])
             with open("log.txt", "a") as somefile:
-                somefile.write("Trade was confirmed at: " + time.strftime("%d/%m/%Y, %H:%M:%S", time.localtime()) + " you sold {} items\n".format(len_of_confirmed_trade))
+                somefile.write("Trade was confirmed at: " + time.strftime("%d/%m/%Y, %H:%M:%S",
+                                                                          time.localtime()) + " you sold {} items\n".format(
+                    len_of_confirmed_trade))
             update_inventory()
         except:
             pass
@@ -93,7 +97,7 @@ def market_scheduler():
     schedule.every(1.5).minutes.do(trade_request_give_p2p)
     while True:
         try:
-            schedule.run_pending() # здесь JSONDecoder error выдаёт, попробовал так сделать, хз вообще что с ним делать
+            schedule.run_pending()  # здесь JSONDecoder error выдаёт, попробовал так сделать, хз вообще что с ним делать
         except:
             pass
             # continue или break я не пробовал
@@ -144,6 +148,7 @@ def browse():
     entry_path.delete(0, END)
     entry_path.insert(0, path_to_steam)
 
+
 def save_data():
     with shelve.open("data") as data:
         data["username"] = login_entry.get()
@@ -180,6 +185,7 @@ def log_in():
     except:
         messagebox.showerror("Error", "The account name or password that you have entered is incorrect")
 
+
 def insert_data():
     with shelve.open("data") as data:
         entry_login.delete(0, END)
@@ -196,6 +202,7 @@ def insert_data():
 
         entry_path.delete(0, END)
         entry_path.insert(0, data["steamguard_path"])
+
 
 def find_market_api():
     result = webbrowser.open("https://market.csgo.com/docs-v2", new=1)
