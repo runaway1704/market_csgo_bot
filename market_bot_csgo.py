@@ -79,6 +79,14 @@ def trade_request_give_p2p():  # Запросить данные для пере
             pass
 
 
+def auto_accept_donation_trade_offers():
+    offers = client.get_trade_offers()['response']['trade_offers_received']
+    for offer in offers:
+        if is_donation(offer):
+            offer_id = offer['tradeofferid']
+            client.accept_trade_offer(offer_id)
+
+
 def is_donation(offer: dict) -> bool:
     return offer.get('items_to_receive') \
            and not offer.get('items_to_give') \
@@ -91,10 +99,12 @@ def market_scheduler():
     turn_on_selling()
     trade_request_take()
     trade_request_give_p2p()
+    auto_accept_donation_trade_offers()
     schedule.every(3.1).minutes.do(connect_to_sever)
     schedule.every(3.1).minutes.do(turn_on_selling)
     schedule.every(1.5).minutes.do(trade_request_take)
     schedule.every(1.5).minutes.do(trade_request_give_p2p)
+    schedule.every(1.1).minutes.do(auto_accept_donation_trade_offers)
     while True:
         try:
             schedule.run_pending()  # здесь JSONDecoder error выдаёт, попробовал так сделать, хз вообще что с ним делать
