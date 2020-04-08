@@ -95,6 +95,7 @@ def market_scheduler():
             schedule.run_pending() # здесь JSONDecoder error выдаёт, попробовал так сделать, хз вообще что с ним делать
         except:
             pass
+            # continue или break я не пробовал
             # schedule.run_pending()
 
 
