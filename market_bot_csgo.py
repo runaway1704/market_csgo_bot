@@ -32,7 +32,10 @@ def turn_on_selling():  # включает продажи(подавать за�
 def trade_request_take():  # Создать запрос на передачу КУПЛЕНЫХ ПРЕДМЕТОВ
     req = requests.get(
         "https://market.csgo.com/api/v2/trade-request-take?key={}".format(market_api_key))
-    req_json = req.json()
+    try:
+        req_json = req.json()
+    except:
+        req_json = req.json()
     success = req_json.get("success", "")
     if success:  # проверка на создание трейда, а ниже,  собственно, его принятие
         offers = client.get_trade_offers()['response'][
@@ -50,8 +53,10 @@ def trade_request_take():  # Создать запрос на передачу �
 def trade_request_give_p2p():  # Запросить данные для передачи предмета ПОКУПАТЕЛЮ (только для CS:GO)
     response_market = requests.get(
         "https://market.csgo.com/api/v2/trade-request-give-p2p?key={}".format(market_api_key))
-
-    response_market_json = response_market.json()
+    try:
+        response_market_json = response_market.json()
+    except:
+        response_market_json = response_market.json()
     success_market = response_market_json.get("success", "")
     response_steam = requests.get(
         "https://api.steampowered.com/IEconService/GetTradeOffers/v1/?key={}&get_sent_offers=1&historical_only".format(
@@ -89,7 +94,8 @@ def market_scheduler():
         try:
             schedule.run_pending() # здесь JSONDecoder error выдаёт, попробовал так сделать, вроде работает
         except:
-            schedule.run_pending()
+            pass
+            # schedule.run_pending()
 
 
 win = Tk()
