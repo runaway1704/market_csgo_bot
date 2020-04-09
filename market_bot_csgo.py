@@ -36,7 +36,7 @@ def trade_request_take():  # Создать запрос на передачу �
     try:
         req_json = req.json()  # добавил это, надеюсь сработает
     except:
-        req_json = req.json()
+        return
     success = req_json.get("success", "")
     if success:  # проверка на создание трейда, а ниже,  собственно, его принятие
         offers = client.get_trade_offers()['response'][
@@ -59,7 +59,7 @@ def trade_request_give_p2p():  # Запросить данные для пере
     try:
         response_market_json = response_market.json()  # добавил это, надеюсь сработает
     except:
-        response_market_json = response_market.json()
+        return
     success_market = response_market_json.get("success", "")
     response_steam = requests.get(
         "https://api.steampowered.com/IEconService/GetTradeOffers/v1/?key={}&get_sent_offers=1&historical_only".format(
