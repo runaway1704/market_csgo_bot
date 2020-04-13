@@ -21,7 +21,7 @@ def update_inventory():
 
 
 def are_credentials_filled() -> bool:
-    return api_key != '' and steamguard_path != '' and username != '' and password != '' and market_api_key != ''
+    return api_key != '' or steamguard_path != '' or username != '' or password != '' or market_api_key != ''
 
 
 def turn_on_selling():  # включает продажи(подавать запрос раз на 3 минуты)
