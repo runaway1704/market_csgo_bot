@@ -61,12 +61,12 @@ def trade_request_give_p2p():  # Запросить данные для пере
     except:
         return
     success_market = response_market_json.get("success", "")
-    response_steam = requests.get(
-        "https://api.steampowered.com/IEconService/GetTradeOffers/v1/?key={}&get_sent_offers=1&historical_only".format(
-            api_key))
-    offer = response_steam.json()["response"]["trade_offers_sent"][0]
-    trade_offer_id = offer["tradeofferid"]  # данные стима
     if success_market:
+        response_steam = requests.get(
+            "https://api.steampowered.com/IEconService/GetTradeOffers/v1/?key={}&get_sent_offers=1&historical_only".format(
+                api_key))
+        offer = response_steam.json()["response"]["trade_offers_sent"][0]
+        trade_offer_id = offer["tradeofferid"]  # данные стима
         try:
             client._confirm_transaction(trade_offer_id)
             len_of_confirmed_trade = len(offer["items_to_give"])
@@ -111,7 +111,6 @@ def market_scheduler():
         except:
             return
             # continue или break я не пробовал
-            # schedule.run_pending()
 
 
 win = Tk()
