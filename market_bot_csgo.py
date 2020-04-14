@@ -1,5 +1,5 @@
 import requests
-import schedule
+import sched
 import time
 from steampy.client import SteamClient, TradeOfferState
 from tkinter import *
@@ -85,6 +85,7 @@ def auto_accept_donation_trade_offers():
         if is_donation(offer):
             offer_id = offer['tradeofferid']
             client.accept_trade_offer(offer_id)
+            update_inventory()
 
 
 def is_donation(offer: dict) -> bool:
@@ -96,21 +97,22 @@ def is_donation(offer: dict) -> bool:
 
 def market_scheduler():
     connect_to_sever()
+    update_inventory()
     turn_on_selling()
     trade_request_take()
     trade_request_give_p2p()
     auto_accept_donation_trade_offers()
-    schedule.every(3.1).minutes.do(connect_to_sever)
-    schedule.every(3.1).minutes.do(turn_on_selling)
-    schedule.every(1.5).minutes.do(trade_request_take)
-    schedule.every(1.5).minutes.do(trade_request_give_p2p)
-    schedule.every(1.1).minutes.do(auto_accept_donation_trade_offers)
+
+    s = sched.scheduler(time.time, time.sleep)
+
     while True:
-        try:
-            schedule.run_pending()  # здесь JSONDecoder error выдаёт, попробовал так сделать, хз вообще что с ним делать
-        except:
-            return
-            # continue или break я не пробовал
+        s.enter(180, 1, connect_to_sever)
+        s.enter(181, 1, turn_on_selling)
+        s.enter(90, 1, trade_request_take)
+        s.enter(90, 1, trade_request_give_p2p)
+        s.enter(90, 2, auto_accept_donation_trade_offers)
+        s.enter(3600, 2, update_inventory)
+        s.run()
 
 
 win = Tk()
