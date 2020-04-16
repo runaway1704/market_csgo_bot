@@ -125,30 +125,43 @@ win.configure(bg="pink")
 def create_widgets():
     root = Tk()
     root.title("Market Bot")
-    root.maxsize(width=300, height=400)  # 230
+    root.maxsize(width=300, height=160)  # 230
     root.geometry("300x400")
 
-    frame = Frame(root, bg='gray', height=40)
+    frame = Frame(root,
+                  bg='gray',
+                  height=40)
     frame.pack(side="top", fill="x")
 
-    label = Label(frame, text="Market Bot", font="Arial 16", padx=3, pady=10)
+    label = Label(frame,
+                  text="Market Bot",
+                  font="Arial 24",
+                  padx=3,
+                  pady=10,
+                  bg="grey")
     label.pack()
 
-    label1 = Label(root, text="This bot can accept all trade offers", font="Arial 14", bg="skyblue", padx=3, pady=10)
+    label1 = Label(root, text="This bot can accept all trade offers", font="Arial 14", bg="grey", padx=3, pady=10)
     label1.pack(side=TOP)
 
     frame1 = Frame(root)
     frame1.pack(side=BOTTOM)
 
-    sib = Label(root,
-                text="If you get a jsonDecoder error, don’t be afraid, just\n restart the bot and try not to enter sleep mode\n on your PC, this error means that the connection\n to the server is lost.",
-                font="Arial 10")
-    sib.pack(side="top", fill=BOTH)
-
-    exit_button = Button(frame1, bg='grey', text="exit", command=root.destroy, height=3, width=20)
+    exit_button = Button(frame1,
+                         bg='#FFEBCD',
+                         text="Exit",
+                         command=root.destroy,
+                         height=3,
+                         width=20)
     exit_button.pack(side=RIGHT, fill=BOTH)
 
-    start_button = Button(frame1, bg="#007dff", text="Bot Start", command=market_scheduler, height=3, width=20)
+    start_button = Button(frame1,
+                          bg="#FFEBCD",
+                          text="Start",
+                          command=market_scheduler,
+                          height=3,
+                          width=20,
+                          activebackground="grey")
     start_button.pack(side=LEFT, fill=BOTH)
 
 
@@ -182,7 +195,7 @@ def log_in():
     api_key = steam_api_entry.get()
     steamguard_path = entry_path.get()
     if not are_credentials_filled():
-        messagebox.showerror("Error", "You have to fill credentials")
+        messagebox.showerror("Error", "You have to fill credentials.")
         return
     try:
         client = SteamClient(api_key)
@@ -194,7 +207,8 @@ def log_in():
         global win
         win.destroy()
     except:
-        messagebox.showerror("Error", "The account name or password that you have entered is incorrect")
+        messagebox.showerror("Error", "The account name or password that you have entered is incorrect or you made too"
+                                      " many tryes to log in.")
 
 
 def insert_data():
@@ -288,7 +302,7 @@ btn_insert_data = Button(win, text="Insert data", command=insert_data, pady=5, p
 btn_insert_data.grid(row=6, column=2, sticky="w")
 
 lbl = Label(win, text="You need to put in 'Steamguard file path' txt file in format:  ", bg="pink")
-lbl.grid(row=7, column=0, columnspan=3, sticky="w")
+lbl.grid(row=7, column=0, columnspan=3)
 
 a = """
 {
@@ -299,6 +313,6 @@ a = """
 """
 
 lbl2 = Label(win, text=a, bg="pink")
-lbl2.grid(row=8, column=0, columnspan=4, sticky="w")
+lbl2.grid(row=8, column=0, columnspan=4)
 
 win.mainloop()
