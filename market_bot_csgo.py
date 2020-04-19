@@ -119,14 +119,14 @@ win = Tk()
 win.geometry("380x500")
 win.maxsize(width=380, height=425)
 win.title("Entry to bot")
-win.iconbitmap(r"C:\Users\Андрей\PycharmProjects\market_bot\123.ico")
+win.iconbitmap(r"C:\Users\Андрей\Desktop\New folder\123.ico")
 win.configure(bg="pink")
 
 
 def create_widgets():
     root = Tk()
     root.title("Market Bot")
-    root.iconbitmap(r"C:\Users\Андрей\PycharmProjects\market_bot\123.ico")
+    root.iconbitmap(r"C:\Users\Андрей\Desktop\New folder\123.ico")
     root.configure(bg="#808080")
     root.maxsize(width=335, height=160)  # 230
     root.geometry("335x160")
@@ -194,20 +194,23 @@ def log_in():
 
 def insert_data():
     with shelve.open("data") as data:
-        entry_login.delete(0, END)
-        entry_login.insert(0, data["username"])
+        try:
+            entry_login.delete(0, END)
+            entry_login.insert(0, data["username"])
 
-        entry_password.delete(0, END)
-        entry_password.insert(0, data["password"])
+            entry_password.delete(0, END)
+            entry_password.insert(0, data["password"])
 
-        entry_market_api.delete(0, END)
-        entry_market_api.insert(0, data["market_api_key"])
+            entry_market_api.delete(0, END)
+            entry_market_api.insert(0, data["market_api_key"])
 
-        entry_steam_api.delete(0, END)
-        entry_steam_api.insert(0, data["api_key"])
+            entry_steam_api.delete(0, END)
+            entry_steam_api.insert(0, data["api_key"])
 
-        entry_path.delete(0, END)
-        entry_path.insert(0, data["steamguard_path"])
+            entry_path.delete(0, END)
+            entry_path.insert(0, data["steamguard_path"])
+        except KeyError:
+            pass
 
 
 def find_market_api():
