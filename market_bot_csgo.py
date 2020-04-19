@@ -119,50 +119,31 @@ win = Tk()
 win.geometry("380x500")
 win.maxsize(width=380, height=425)
 win.title("Entry to bot")
+win.iconbitmap(r"C:\Users\Андрей\PycharmProjects\market_bot\123.ico")
 win.configure(bg="pink")
 
 
 def create_widgets():
     root = Tk()
     root.title("Market Bot")
-    root.maxsize(width=300, height=160)  # 230
-    root.geometry("300x400")
+    root.iconbitmap(r"C:\Users\Андрей\PycharmProjects\market_bot\123.ico")
+    root.configure(bg="#808080")
+    root.maxsize(width=335, height=160)  # 230
+    root.geometry("335x160")
 
-    frame = Frame(root,
-                  bg='gray',
-                  height=40)
-    frame.pack(side="top", fill="x")
+    market_label = Label(root, text="Market bot", font="Arial 24", padx=3, pady=5, bg="#808080", borderwidth=1)
+    market_label.grid(row=0, column=0, padx=5, pady=10)
 
-    label = Label(frame,
-                  text="Market Bot",
-                  font="Arial 24",
-                  padx=3,
-                  pady=10,
-                  bg="grey")
-    label.pack()
+    text = """
+    This bot can accept gift trade offers, 
+    autoconfirm and autoreceive items
+    """
 
-    label1 = Label(root, text="This bot can accept all trade offers", font="Arial 14", bg="grey", padx=3, pady=10)
-    label1.pack(side=TOP)
+    about_label = Label(root, text=text, font="Arial 14", bg="#808080")
+    about_label.grid(row=1, column=0, columnspan=2)
 
-    frame1 = Frame(root)
-    frame1.pack(side=BOTTOM)
-
-    exit_button = Button(frame1,
-                         bg='#FFEBCD',
-                         text="Exit",
-                         command=root.destroy,
-                         height=3,
-                         width=20)
-    exit_button.pack(side=RIGHT, fill=BOTH)
-
-    start_button = Button(frame1,
-                          bg="#FFEBCD",
-                          text="Start",
-                          command=market_scheduler,
-                          height=3,
-                          width=20,
-                          activebackground="grey")
-    start_button.pack(side=LEFT, fill=BOTH)
+    start_btm = Button(root, bg="#C0C0C0", text="Start", activebackground="grey", command=market_scheduler)
+    start_btm.grid(row=0, column=1, padx=5, pady=10, ipadx=60, ipady=15)
 
 
 def browse():
