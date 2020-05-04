@@ -16,8 +16,11 @@ def connect_to_sever():
 
 
 def update_inventory():
-    req = requests.get("https://market.csgo.com/api/v2/update-inventory/?key={}".format(market_api_key))
-    return req
+    try:
+        req = requests.get("https://market.csgo.com/api/v2/update-inventory/?key={}".format(market_api_key))
+        return req
+    except:
+        pass
 
 
 def are_credentials_filled() -> bool:
@@ -25,9 +28,12 @@ def are_credentials_filled() -> bool:
 
 
 def turn_on_selling():  # включает продажи(подавать запрос раз на 3 минуты)
-    r = requests.get(
-        "https://market.csgo.com/api/v2/ping?key={}".format(market_api_key))
-    return r
+    try:
+        r = requests.get(
+            "https://market.csgo.com/api/v2/ping?key={}".format(market_api_key))
+        return r
+    except:
+        pass
 
 
 def trade_request_take():  # Создать запрос на передачу КУПЛЕНЫХ ПРЕДМЕТОВ
@@ -36,7 +42,7 @@ def trade_request_take():  # Создать запрос на передачу �
     try:
         req_json = req.json()  # добавил это, надеюсь сработает
     except:
-        return
+        pass
     success = req_json.get("success", "")
     if success:  # проверка на создание трейда, а ниже,  собственно, его принятие
         offers = client.get_trade_offers()['response'][
@@ -59,7 +65,7 @@ def trade_request_give_p2p():  # Запросить данные для пере
     try:
         response_market_json = response_market.json()  # добавил это, надеюсь сработает
     except:
-        return
+        pass
     success_market = response_market_json.get("success", "")
     if success_market:
         response_steam = requests.get(
