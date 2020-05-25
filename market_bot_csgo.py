@@ -1,5 +1,4 @@
 import requests
-import sched
 import time
 from steampy.client import SteamClient, TradeOfferState
 from tkinter import *
@@ -8,6 +7,24 @@ from tkinter import messagebox
 import webbrowser
 import socket
 import shelve
+import schedule
+import functools
+
+
+def catch_exceptions(cancel_on_failure=False):
+    def catch_exceptions_decorator(job_func):
+        @functools.wraps(job_func)
+        def wrapper(*args, **kwargs):
+            try:
+                return job_func(*args, **kwargs)
+            except:
+                pass
+                if cancel_on_failure:
+                    return
+
+        return wrapper
+
+    return catch_exceptions_decorator
 
 
 def connect_to_sever():
@@ -15,38 +32,32 @@ def connect_to_sever():
     sock.connect(('104.18.8.154', 8080))
 
 
+@catch_exceptions(cancel_on_failure=False)
 def update_inventory():
-    try:
-        req = requests.get("https://market.csgo.com/api/v2/update-inventory/?key={}".format(market_api_key))
-        return req
-    except:
-        pass
+    url = "https://market.csgo.com/api/v2/update-inventory/?key={}"
+    # req = requests.get("https://market.csgo.com/api/v2/update-inventory/?key={}".format(market_api_key))
+    # print(req.json())
+    return requests.get(url.format(market_api_key)).json()
 
 
 def are_credentials_filled() -> bool:
     return api_key != '' or steamguard_path != '' or username != '' or password != '' or market_api_key != ''
 
 
+@catch_exceptions(cancel_on_failure=False)
 def turn_on_selling():  # включает продажи(подавать запрос раз на 3 минуты)
-    try:
-        r = requests.get(
-            "https://market.csgo.com/api/v2/ping?key={}".format(market_api_key))
-        return r
-    except:
-        pass
+    r = requests.get("https://market.csgo.com/api/v2/ping?key={}".format(market_api_key))
+    return r
 
 
+@catch_exceptions(cancel_on_failure=False)
 def trade_request_take():  # Создать запрос на передачу КУПЛЕНЫХ ПРЕДМЕТОВ
-    req = requests.get(
-        "https://market.csgo.com/api/v2/trade-request-take?key={}".format(market_api_key))
-    try:
-        req_json = req.json()  # добавил это, надеюсь сработает
-    except:
-        pass
+    req = requests.get("https://market.csgo.com/api/v2/trade-request-take?key={}".format(market_api_key))
+    req_json = req.json()  # добавил это, надеюсь сработает
+
     success = req_json.get("success", "")
     if success:  # проверка на создание трейда, а ниже,  собственно, его принятие
-        offers = client.get_trade_offers()['response'][
-            'trade_offers_received']  # offers = client.get_trade_offers()["response"]["trade_offers_sent"]
+        offers = client.get_trade_offers()['response']['trade_offers_received']
         for offer in offers:
             if is_donation(offer):
                 offer_id = offer['tradeofferid']
@@ -59,13 +70,12 @@ def trade_request_take():  # Создать запрос на передачу �
                 update_inventory()
 
 
+@catch_exceptions(cancel_on_failure=False)
 def trade_request_give_p2p():  # Запросить данные для передачи предмета ПОКУПАТЕЛЮ (только для CS:GO)
     response_market = requests.get(
         "https://market.csgo.com/api/v2/trade-request-give-p2p?key={}".format(market_api_key))
-    try:
-        response_market_json = response_market.json()  # добавил это, надеюсь сработает
-    except:
-        pass
+    response_market_json = response_market.json()  # добавил это, надеюсь сработает
+
     success_market = response_market_json.get("success", "")
     if success_market:
         response_steam = requests.get(
@@ -101,7 +111,12 @@ def is_donation(offer: dict) -> bool:
            and not offer['is_our_offer']
 
 
+def print_time():
+    print(time.strftime("%d/%m/%Y, %H:%M:%S", time.localtime()))
+
+
 def market_scheduler():
+    print_time()
     connect_to_sever()
     update_inventory()
     turn_on_selling()
@@ -109,16 +124,22 @@ def market_scheduler():
     trade_request_give_p2p()
     auto_accept_donation_trade_offers()
 
-    s = sched.scheduler(time.time, time.sleep)
+    schedule.every(1).minute.do(connect_to_sever)
+
+    schedule.every(5).minutes.do(update_inventory)
+
+    schedule.every(3.01).minutes.do(turn_on_selling)
+
+    schedule.every(120).seconds.do(trade_request_take)
+
+    schedule.every(120).seconds.do(trade_request_give_p2p)
+
+    schedule.every(60).seconds.do(auto_accept_donation_trade_offers)
+
+    schedule.every(2).minutes.do(print_time)
 
     while True:
-        s.enter(180, 1, connect_to_sever)
-        s.enter(181, 1, turn_on_selling)
-        s.enter(90, 1, trade_request_take)
-        s.enter(90, 1, trade_request_give_p2p)
-        s.enter(90, 2, auto_accept_donation_trade_offers)
-        s.enter(3600, 2, update_inventory)
-        s.run()
+        schedule.run_pending()
 
 
 win = Tk()
@@ -141,7 +162,7 @@ def create_widgets():
     market_label.grid(row=0, column=0, padx=5, pady=10)
 
     text = """
-    This bot can accept gift trade offers, 
+    This bot can accept gift trade offers,
     autoconfirm and autoreceive items
     """
 
