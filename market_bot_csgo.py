@@ -46,7 +46,7 @@ def are_credentials_filled() -> bool:
 
 @catch_exceptions(cancel_on_failure=False)
 def turn_on_selling():  # включает продажи(подавать запрос раз на 3 минуты)
-    r = requests.get("https://market.csgo.com/api/v2/ping?key={}".format(market_api_key))
+    r = requests.get("https://market.csgo.com/api/v2/ping?key={}".format(market_api_key)).json()
     return r
 
 
